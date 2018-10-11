@@ -80,27 +80,34 @@ function loadPreset(id) {
             forceCutoff = 0.00005;
             break;
         case 2:
+            fadeInterval = 1
+            speed = 1000
+            circleCount = 16;
+            radius = 10
+            forceCutoff = 0.00005;
+            break;
+        case 3:
             fadeInterval = Number.MAX_SAFE_INTEGER;
             forceCutoff = 0.00005;
             speed = 2000
             circleCount = 36;
             radius = 10
             break;
-        case 3:
+        case 4:
             forceCutoff = 0.00001
             fadeInterval = Number.MAX_SAFE_INTEGER;
             speed = 500
             circleCount = 100;
             radius = 2
             break;
-        case 4:
+        case 5:
             fadeInterval = Number.MAX_SAFE_INTEGER
             speed = 200
             forceCutoff = 0.000002
             circleCount = 529
             radius = 2
             break;
-        case 5:
+        case 6:
             fadeInterval = Number.MAX_SAFE_INTEGER
             speed = 200
             forceCutoff = 0.000001
