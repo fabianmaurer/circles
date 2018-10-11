@@ -1,7 +1,7 @@
 
 
 let frameCount = 0;
-let speed = 2000;
+let speed = 4000;
 let fadeInterval = 1;
 let mathsPerFrame = 1;
 let initialVelocityFactor = 1;
@@ -26,6 +26,7 @@ ctxFade.strokeStyle = "#fff";
 ctxFade.fillStyle = "rgba(0,0,0,0.1)";
 let circleCount = 12;
 let radius = 10;
+let deterministic=false;
 
 let data = [
 ]
@@ -34,6 +35,7 @@ $(window).resize(function () {
     resizing = true;
 });
 
+loadPreset(0)
 bindButtons();
 initializeData();
 // randomizeData();
@@ -46,29 +48,37 @@ function bindButtons(){
             loadPreset(i);
         })
     }
+    $('.buttonbar2').children().first().click(function(){
+        deterministic=false;
+        initializeData();
+    })
+    $('.buttonbar2').children().last().click(function(){
+        deterministic=true;
+        initializeData();
+    })
 }
 
 function loadPreset(id) {
     switch (id) {
         case 0:
             fadeInterval = 1
-            speed = 5000
-            circleCount = 6;
+            speed = 10000
+            circleCount = 4;
             radius = 10
             forceCutoff = 0.00002;
             break;
         case 1:
             fadeInterval = 1
             speed = 2000
-            circleCount = 12;
+            circleCount = 9;
             radius = 10
             forceCutoff = 0.00005;
             break;
         case 2:
             fadeInterval = Number.MAX_SAFE_INTEGER;
             forceCutoff = 0.00005;
-            speed = 4000
-            circleCount = 20;
+            speed = 2000
+            circleCount = 36;
             radius = 10
             break;
         case 3:
@@ -82,14 +92,14 @@ function loadPreset(id) {
             fadeInterval = Number.MAX_SAFE_INTEGER
             speed = 200
             forceCutoff = 0.000002
-            circleCount = 500
+            circleCount = 529
             radius = 2
             break;
         case 5:
             fadeInterval = Number.MAX_SAFE_INTEGER
             speed = 200
             forceCutoff = 0.000001
-            circleCount = 1000
+            circleCount = 1089
             radius = 2
             break;
     }
@@ -127,18 +137,36 @@ function multiloop() {
     requestAnimationFrame(multiloop);
 }
 
+
 function initializeData() {
     data=[];
-    for (let i = 0; i < circleCount; i++) {
-        data.push({
-            x: getRandomXPos(),
-            y: getRandomYPos(),
-            lastax: 0,
-            lastay: 0,
-            vx: (randomness * (Math.random() - 0.5)) * initialVelocityFactor,
-            vy: (randomness * (Math.random() - 0.5)) * initialVelocityFactor
-        })
+    if(deterministic){
+        let perRow=Math.sqrt(circleCount);
+        let widthPerCircle=(w/2)/(perRow-1);
+        let heightPerCircle=(h/2)/(perRow-1);
+        for (let i = 0; i < circleCount; i++) {
+            data.push({
+                x: w/4+(i%perRow)*widthPerCircle,
+                y: h/4+Math.floor(i/perRow)*heightPerCircle,
+                lastax: 0,
+                lastay: 0,
+                vx: (randomness * (Math.random() - 0.5)) * initialVelocityFactor,
+                vy: (randomness * (Math.random() - 0.5)) * initialVelocityFactor
+            })
+        }
+    }else{
+        for (let i = 0; i < circleCount; i++) {
+            data.push({
+                x: getRandomXPos(),
+                y: getRandomYPos(),
+                lastax: 0,
+                lastay: 0,
+                vx: (randomness * (Math.random() - 0.5)) * initialVelocityFactor,
+                vy: (randomness * (Math.random() - 0.5)) * initialVelocityFactor
+            })
+        }
     }
+    
 }
 
 function randomizeData() {
@@ -186,23 +214,26 @@ function move() {
     for (let i = 0; i < data.length; i++) {
         data[i].x += data[i].vx;
         data[i].y += data[i].vy;
-        if (data[i].x < 0 || data[i].x > w) {
-            data[i].x = getRandomXPos();
-            data[i].y = getRandomYPos();
-            data[i].lastax = 0;
-            data[i].lastay = 0;
-            data[i].vx = (randomness * (Math.random() - 0.5)) * initialVelocityFactor;
-            data[i].vy = (randomness * (Math.random() - 0.5)) * initialVelocityFactor;
-
+        if(!deterministic){
+            if (data[i].x < 0 || data[i].x > w) {
+                data[i].x = getRandomXPos();
+                data[i].y = getRandomYPos();
+                data[i].lastax = 0;
+                data[i].lastay = 0;
+                data[i].vx = (randomness * (Math.random() - 0.5)) * initialVelocityFactor;
+                data[i].vy = (randomness * (Math.random() - 0.5)) * initialVelocityFactor;
+    
+            }
+            if (data[i].y < 0 || data[i].y > h) {
+                data[i].x = getRandomXPos();
+                data[i].y = getRandomYPos();
+                data[i].lastax = 0;
+                data[i].lastay = 0;
+                data[i].vx = (randomness * (Math.random() - 0.5)) * initialVelocityFactor;
+                data[i].vy = (randomness * (Math.random() - 0.5)) * initialVelocityFactor;
+            }
         }
-        if (data[i].y < 0 || data[i].y > h) {
-            data[i].x = getRandomXPos();
-            data[i].y = getRandomYPos();
-            data[i].lastax = 0;
-            data[i].lastay = 0;
-            data[i].vx = (randomness * (Math.random() - 0.5)) * initialVelocityFactor;
-            data[i].vy = (randomness * (Math.random() - 0.5)) * initialVelocityFactor;
-        }
+        
     }
 }
 

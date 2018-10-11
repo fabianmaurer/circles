@@ -30,3 +30,10 @@ body{
 .button:hover{
     background:rgba(255,255,255,0.2);
 }
+
+.buttonbar2{
+    position:fixed;
+    top:50px;
+    right:0;
+    padding:10px;
+}
