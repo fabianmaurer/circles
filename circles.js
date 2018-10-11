@@ -1,10 +1,10 @@
 
 
 let frameCount=0;
-const speed=0.00005;
-const fadeInterval=5;
-const mathsPerFrame=5000;
-const initialVelocityFactor=0.001;
+const speed=2000;
+const fadeInterval=1;
+const mathsPerFrame=1;
+const initialVelocityFactor=1;
 const randomness=0;
 const forceCutoff=0.0001;
 let t0=performance.now();
@@ -121,9 +121,8 @@ function multiloop(){
 
     }
     drawCircles();
-    let t1=performance.now();
-    ctx.fillText(Math.round(1/((performance.now()-t0)/1000)),10,10);
-    t0=performance.now();
+    // ctx.fillText(Math.round(1/((performance.now()-t0)/1000)),10,10);
+    // t0=performance.now();
     requestAnimationFrame(multiloop);
 }
 
@@ -136,6 +135,7 @@ function randomizeData(){
         data[i].vx=(randomness*(Math.random()-0.5))*initialVelocityFactor;
         data[i].vy=(randomness*(Math.random()-0.5))*initialVelocityFactor;
     }
+    console.log(data)
 }
 
 function calculateMovement(){
