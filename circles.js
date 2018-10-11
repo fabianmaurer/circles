@@ -1,10 +1,12 @@
 
 
 let frameCount=0;
-let speed=0.0001;
-let fadeInterval=10000000;
+const speed=0.00005;
+const fadeInterval=5;
 const mathsPerFrame=5000;
-const initialVelocityFactor=0.0001;
+const initialVelocityFactor=0.001;
+const randomness=0;
+const forceCutoff=0.0001;
 
 let can=document.getElementById('circles');
 let w=$(can).width();
@@ -20,7 +22,7 @@ let ctxFade=canFade.getContext('2d');
 ctx.strokeStyle="#fff";
 ctx.lineWidth=2;
 ctxFade.strokeStyle="#fff";
-ctxFade.fillStyle="rgba(0,0,0,0.2)";
+ctxFade.fillStyle="rgba(0,0,0,0.1)";
 
 let data=[
     {
@@ -125,8 +127,8 @@ function randomizeData(){
         data[i].y=getRandomYPos();
         data[i].lastax=0;
         data[i].lastay=0;
-        data[i].vx=0;
-        data[i].vy=0;
+        data[i].vx=(randomness*(Math.random()-0.5))*initialVelocityFactor;
+        data[i].vy=(randomness*(Math.random()-0.5))*initialVelocityFactor;
     }
 }
 
@@ -143,7 +145,7 @@ function calculateMovement(){
             dy=data[i].y-data[j].y;
             dsq=Math.pow(dx,2)+Math.pow(dy,2);
             f=1/dsq;
-            if(f>10) f=10;
+            if(f>forceCutoff) f=forceCutoff;
             d=Math.sqrt(dsq);
             ax=speed*f*dx/d;
             ay=speed*f*dy/d;
@@ -168,8 +170,8 @@ function move(){
             data[i].y=getRandomYPos();
             data[i].lastax=0;
             data[i].lastay=0;
-            data[i].vx=0;
-            data[i].vy=0;
+            data[i].vx=(randomness*(Math.random()-0.5))*initialVelocityFactor;
+            data[i].vy=(randomness*(Math.random()-0.5))*initialVelocityFactor;
             
         }
         if(data[i].y<0 || data[i].y>h){
@@ -177,18 +179,18 @@ function move(){
             data[i].y=getRandomYPos();
             data[i].lastax=0;
             data[i].lastay=0;
-            data[i].vx=0;
-            data[i].vy=0;
+            data[i].vx=(randomness*(Math.random()-0.5))*initialVelocityFactor;
+            data[i].vy=(randomness*(Math.random()-0.5))*initialVelocityFactor;
         }
     }
 }
 
 function getRandomXPos(){
-    return Math.random()*200+(w/2-100)
+    return Math.random()*w/2+(w/4)
 }
 
 function getRandomYPos(){
-    return Math.random()*200+(h/2-100)
+    return Math.random()*h/2+(h/4)
 }
 
 function drawCircles(){
