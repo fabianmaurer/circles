@@ -12,12 +12,12 @@ let h=$(can).height();
 can.width=w;
 can.height=h;
 let ctx=can.getContext('2d');
-ctx.strokeStyle="#fff";
-
+let resizing=false;
 let canFade=document.createElement('canvas');
 canFade.width=w;
 canFade.height=h;
 let ctxFade=canFade.getContext('2d');
+ctx.strokeStyle="#fff";
 ctxFade.strokeStyle="#fff";
 ctxFade.fillStyle="rgba(0,0,0,0.2)";
 
@@ -71,13 +71,41 @@ let data=[
         lastay:0,
         r:10,
         m:1
+    },
+    {
+        x:400,
+        y:600,
+        vx:0*initialVelocityFactor,
+        vy:0*initialVelocityFactor,
+        lastax:0,
+        lastay:0,
+        r:10,
+        m:1
     }
 ]
+
+$(window).resize(function(){
+    resizing=true;
+});
 
 randomizeData();
 multiloop();
 
 function multiloop(){
+    if(resizing){
+        resizing=false;
+        w=$(can).width();
+        h=$(can).height();
+        ctx.canvas.width=w;
+        ctx.canvas.height=h;
+        ctxFade.canvas.width=w;
+        ctxFade.canvas.height=h;
+        randomizeData();
+        ctx.strokeStyle="#fff";
+        ctxFade.strokeStyle="#fff";
+        ctxFade.fillStyle="rgba(0,0,0,0.2)";
+    }
+    frameCount++;
     ctxFade.fillRect(0,0,w,h);
     ctx.clearRect(0,0,w,h);
     ctx.drawImage(canFade,0,0);
@@ -87,7 +115,6 @@ function multiloop(){
 
     }
     drawCircles();
-    frameCount++;
     requestAnimationFrame(multiloop);
 }
 
