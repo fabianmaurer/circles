@@ -72,9 +72,9 @@ function loadPreset(id) {
             radius = 10
             break;
         case 3:
-            forceCutoff = 0.00002
+            forceCutoff = 0.00001
             fadeInterval = Number.MAX_SAFE_INTEGER;
-            speed = 1000
+            speed = 500
             circleCount = 100;
             radius = 2
             break;
