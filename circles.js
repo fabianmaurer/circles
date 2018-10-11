@@ -46,6 +46,7 @@ function bindButtons(){
         $(buttons[i]).click(function(e){
             $('.buttonbar').find('.active').removeClass('active');
             $(e.currentTarget).addClass('active')
+            ctxFade.clearRect(0,0,w,h)
             loadPreset(i);
         })
     }
