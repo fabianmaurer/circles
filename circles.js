@@ -7,7 +7,7 @@ const mathsPerFrame=5000;
 const initialVelocityFactor=0.001;
 const randomness=0;
 const forceCutoff=0.0001;
-
+let t0=performance.now();
 let can=document.getElementById('circles');
 let w=$(can).width();
 let h=$(can).height();
@@ -20,6 +20,7 @@ canFade.width=w;
 canFade.height=h;
 let ctxFade=canFade.getContext('2d');
 ctx.strokeStyle="#fff";
+ctx.fillStyle='#fff';
 ctx.lineWidth=2;
 ctxFade.strokeStyle="#fff";
 ctxFade.fillStyle="rgba(0,0,0,0.1)";
@@ -95,6 +96,7 @@ randomizeData();
 multiloop();
 
 function multiloop(){
+    
     if(resizing){
         resizing=false;
         w=$(can).width();
@@ -105,6 +107,7 @@ function multiloop(){
         ctxFade.canvas.height=h;
         randomizeData();
         ctx.strokeStyle="#fff";
+        ctx.fillStyle='#fff';
         ctxFade.strokeStyle="#fff";
         ctxFade.fillStyle="rgba(0,0,0,0.2)";
     }
@@ -118,6 +121,9 @@ function multiloop(){
 
     }
     drawCircles();
+    let t1=performance.now();
+    ctx.fillText(Math.round(1/((performance.now()-t0)/1000)),10,10);
+    t0=performance.now();
     requestAnimationFrame(multiloop);
 }
 
