@@ -18,6 +18,7 @@ canFade.width=w;
 canFade.height=h;
 let ctxFade=canFade.getContext('2d');
 ctx.strokeStyle="#fff";
+ctx.lineWidth=2;
 ctxFade.strokeStyle="#fff";
 ctxFade.fillStyle="rgba(0,0,0,0.2)";
 
