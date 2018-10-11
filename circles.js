@@ -44,16 +44,22 @@ multiloop();
 function bindButtons(){
     let buttons=$('.buttonbar').children();
     for(let i=0;i<buttons.length;i++){
-        $(buttons[i]).click(function(){
+        $(buttons[i]).click(function(e){
+            $('.buttonbar').find('.active').removeClass('active');
+            $(e.currentTarget).addClass('active')
             loadPreset(i);
         })
     }
-    $('.buttonbar2').children().first().click(function(){
+    $('.buttonbar2').children().first().click(function(e){
         deterministic=false;
+        $('.buttonbar2').find('.active').removeClass('active');
+        $(e.currentTarget).addClass('active')
         initializeData();
     })
-    $('.buttonbar2').children().last().click(function(){
+    $('.buttonbar2').children().last().click(function(e){
         deterministic=true;
+        $('.buttonbar2').find('.active').removeClass('active');
+        $(e.currentTarget).addClass('active')
         initializeData();
     })
 }
