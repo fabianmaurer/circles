@@ -1,7 +1,7 @@
 
 
 let frameCount=0;
-let speed=0.00005;
+let speed=0.0001;
 let fadeInterval=10000000;
 const mathsPerFrame=5000;
 const initialVelocityFactor=0.0001;
@@ -143,7 +143,7 @@ function calculateMovement(){
             dy=data[i].y-data[j].y;
             dsq=Math.pow(dx,2)+Math.pow(dy,2);
             f=1/dsq;
-            if(f>20) f=20;
+            if(f>10) f=10;
             d=Math.sqrt(dsq);
             ax=speed*f*dx/d;
             ay=speed*f*dy/d;
