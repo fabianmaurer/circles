@@ -38,7 +38,6 @@ $(window).resize(function () {
 loadPreset(0)
 bindButtons();
 initializeData();
-// randomizeData();
 multiloop();
 
 function bindButtons(){
@@ -122,7 +121,7 @@ function multiloop() {
         ctx.canvas.height = h;
         ctxFade.canvas.width = w;
         ctxFade.canvas.height = h;
-        randomizeData();
+        initializeData();
         ctx.strokeStyle = "#fff";
         ctx.fillStyle = '#fff';
         ctxFade.strokeStyle = "#fff";
@@ -173,18 +172,6 @@ function initializeData() {
         }
     }
     
-}
-
-function randomizeData() {
-    for (let i = 0; i < data.length; i++) {
-        data[i].x = getRandomXPos();
-        data[i].y = getRandomYPos();
-        data[i].lastax = 0;
-        data[i].lastay = 0;
-        data[i].vx = (randomness * (Math.random() - 0.5)) * initialVelocityFactor;
-        data[i].vy = (randomness * (Math.random() - 0.5)) * initialVelocityFactor;
-    }
-    console.log(data)
 }
 
 function calculateMovement() {
