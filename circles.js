@@ -9,8 +9,8 @@ let randomness = 0;
 let forceCutoff = 0.00005;
 let t0 = performance.now();
 let can = document.getElementById('circles');
-let w = $(can).width();
-let h = $(can).height();
+let w = $(window).width();
+let h = $(window).height();
 can.width = w;
 can.height = h;
 let ctx = can.getContext('2d');
@@ -24,9 +24,12 @@ ctx.fillStyle = '#fff';
 ctx.lineWidth = 2;
 ctxFade.strokeStyle = "#fff";
 ctxFade.fillStyle = "rgba(0,0,0,0.1)";
+ctxFade.lineWidth = 2;
 let circleCount = 12;
 let radius = 10;
-let deterministic=false;
+let deterministic = false;
+let trail = true;
+let lineTrail = true;
 
 let data = [
 ]
@@ -40,27 +43,50 @@ bindButtons();
 initializeData();
 multiloop();
 
-function bindButtons(){
-    let buttons=$('.buttonbar').children();
-    for(let i=0;i<buttons.length;i++){
-        $(buttons[i]).click(function(e){
+function bindButtons() {
+    let buttons = $('.buttonbar').children();
+    for (let i = 0; i < buttons.length; i++) {
+        $(buttons[i]).click(function (e) {
             $('.buttonbar').find('.active').removeClass('active');
             $(e.currentTarget).addClass('active')
             loadPreset(i);
         })
     }
-    $('.buttonbar2').children().first().click(function(e){
-        deterministic=false;
+    $('.buttonbar2').children().first().click(function (e) {
+        deterministic = false;
         $('.buttonbar2').find('.active').removeClass('active');
         $(e.currentTarget).addClass('active')
         initializeData();
     })
-    $('.buttonbar2').children().last().click(function(e){
-        deterministic=true;
+    $('.buttonbar2').children().last().click(function (e) {
+        deterministic = true;
         $('.buttonbar2').find('.active').removeClass('active');
         $(e.currentTarget).addClass('active')
         initializeData();
     })
+    let trails = $('.buttonbar3').children();
+    for (let i = 0; i < trails.length; i++) {
+        $(trails[i]).click(function (e) {
+            $('.buttonbar3').find('.active').removeClass('active');
+            $(e.currentTarget).addClass('active')
+            trailMode(i);
+        })
+    }
+}
+
+function trailMode(id) {
+    switch (id) {
+        case 0:
+            trail = false;
+            break;
+        case 1:
+            trail = true;
+            lineTrail = true;
+            break;
+        case 2:
+            trail = true;
+            lineTrail = false;
+    }
 }
 
 function loadPreset(id) {
@@ -87,7 +113,7 @@ function loadPreset(id) {
             forceCutoff = 0.00005;
             break;
         case 3:
-            fadeInterval = Number.MAX_SAFE_INTEGER;
+            fadeInterval = 1;
             forceCutoff = 0.00005;
             speed = 2000
             circleCount = 36;
@@ -95,20 +121,20 @@ function loadPreset(id) {
             break;
         case 4:
             forceCutoff = 0.00001
-            fadeInterval = Number.MAX_SAFE_INTEGER;
+            fadeInterval = 1;
             speed = 500
             circleCount = 100;
             radius = 2
             break;
         case 5:
-            fadeInterval = Number.MAX_SAFE_INTEGER
+            fadeInterval = 1
             speed = 200
             forceCutoff = 0.000002
             circleCount = 529
             radius = 2
             break;
         case 6:
-            fadeInterval = Number.MAX_SAFE_INTEGER
+            fadeInterval = 1
             speed = 200
             forceCutoff = 0.000001
             circleCount = 1089
@@ -150,23 +176,25 @@ function multiloop() {
 
 
 function initializeData() {
-    ctxFade.clearRect(0,0,w,h)
-    data=[];
-    if(deterministic){
-        let perRow=Math.sqrt(circleCount);
-        let widthPerCircle=(w/2)/(perRow-1);
-        let heightPerCircle=(h/2)/(perRow-1);
+    ctxFade.clearRect(0, 0, w, h)
+    data = [];
+    if (deterministic) {
+        let perRow = Math.sqrt(circleCount);
+        let widthPerCircle = (w / 2) / (perRow - 1);
+        let heightPerCircle = (h / 2) / (perRow - 1);
         for (let i = 0; i < circleCount; i++) {
             data.push({
-                x: w/4+(i%perRow)*widthPerCircle,
-                y: h/4+Math.floor(i/perRow)*heightPerCircle,
+                x: w / 4 + (i % perRow) * widthPerCircle,
+                y: h / 4 + Math.floor(i / perRow) * heightPerCircle,
+                lastx: w / 4 + (i % perRow) * widthPerCircle,
+                lasty: h / 4 + Math.floor(i / perRow) * heightPerCircle,
                 lastax: 0,
                 lastay: 0,
                 vx: (randomness * (Math.random() - 0.5)) * initialVelocityFactor,
                 vy: (randomness * (Math.random() - 0.5)) * initialVelocityFactor
             })
         }
-    }else{
+    } else {
         for (let i = 0; i < circleCount; i++) {
             data.push({
                 x: getRandomXPos(),
@@ -178,7 +206,7 @@ function initializeData() {
             })
         }
     }
-    
+
 }
 
 function calculateMovement() {
@@ -198,23 +226,21 @@ function calculateMovement() {
             d = Math.sqrt(dsq);
             ax = speed * f * dx / d;
             ay = speed * f * dy / d;
-            data[i].vx -= (ax + data[i].lastax) / 2;
-            data[i].lastvx = ax;
-            data[i].vy -= (ay + data[i].lastay) / 2;
-            data[i].lastvy = ay;
-            data[j].vx += (ax + data[j].lastax) / 2;
-            data[j].lastvx = ax;
-            data[j].vy += (ay + data[j].lastay) / 2;
-            data[j].lastvy = ay;
+            data[i].vx -= ax;
+            data[i].vy -= ay;
+            data[j].vx += ax;
+            data[j].vy += ay;
         }
     }
 }
 
 function move() {
     for (let i = 0; i < data.length; i++) {
+        data[i].lastx = data[i].x;
+        data[i].lasty = data[i].y;
         data[i].x += data[i].vx;
         data[i].y += data[i].vy;
-        if(!deterministic){
+        if (!deterministic) {
             if (data[i].x < 0 || data[i].x > w) {
                 data[i].x = getRandomXPos();
                 data[i].y = getRandomYPos();
@@ -222,7 +248,7 @@ function move() {
                 data[i].lastay = 0;
                 data[i].vx = (randomness * (Math.random() - 0.5)) * initialVelocityFactor;
                 data[i].vy = (randomness * (Math.random() - 0.5)) * initialVelocityFactor;
-    
+
             }
             if (data[i].y < 0 || data[i].y > h) {
                 data[i].x = getRandomXPos();
@@ -233,7 +259,7 @@ function move() {
                 data[i].vy = (randomness * (Math.random() - 0.5)) * initialVelocityFactor;
             }
         }
-        
+
     }
 }
 
@@ -247,19 +273,24 @@ function getRandomYPos() {
 
 function drawCircles() {
     ctx.beginPath();
-    if (frameCount % fadeInterval == 0) {
+    if (trail && (frameCount % fadeInterval == 0)) {
         ctxFade.beginPath();
     }
     for (let i = 0; i < data.length; i++) {
         ctx.moveTo(data[i].x + radius, data[i].y);
         ctx.arc(data[i].x, data[i].y, radius, 0, Math.PI * 2);
-        if (frameCount % fadeInterval == 0) {
-            ctxFade.moveTo(data[i].x + radius, data[i].y);
-            ctxFade.arc(data[i].x, data[i].y, radius, 0, Math.PI * 2);
+        if (trail && (frameCount % fadeInterval == 0)) {
+            if (lineTrail) {
+                ctxFade.moveTo(data[i].lastx, data[i].lasty);
+                ctxFade.lineTo(data[i].x, data[i].y);
+            } else {
+                ctxFade.moveTo(data[i].x + radius, data[i].y);
+                ctxFade.arc(data[i].x, data[i].y, radius, 0, Math.PI * 2);
+            }
         }
     }
     ctx.stroke();
-    if (frameCount % fadeInterval == 0) {
+    if (trail && (frameCount % fadeInterval == 0)) {
         ctxFade.stroke();
     }
 }
