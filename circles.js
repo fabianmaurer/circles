@@ -152,7 +152,7 @@ function loadPreset(id) {
             radius = 2
             break;
     }
-    if(fatLineTrail) ctxFade.lineWidth=radius*2;
+    if(trail && lineTrail && fatLineTrail) ctxFade.lineWidth=radius*2;
     initializeData();
 }
 
@@ -315,6 +315,7 @@ function drawCircles() {
     }
     ctx.stroke();
     if(trail && lineTrail && fatLineTrail){
+        console.log('hi')
         ctx.fill();
     }
     
