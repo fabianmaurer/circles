@@ -242,8 +242,12 @@ function move() {
         data[i].y += data[i].vy;
         if (!deterministic) {
             if (data[i].x < 0 || data[i].x > w) {
-                data[i].x = getRandomXPos();
-                data[i].y = getRandomYPos();
+                let x=getRandomXPos();
+                let y=getRandomYPos();
+                data[i].x = x;
+                data[i].y = y;
+                data[i].lastx=x;
+                data[i].lasty=y;
                 data[i].lastax = 0;
                 data[i].lastay = 0;
                 data[i].vx = (randomness * (Math.random() - 0.5)) * initialVelocityFactor;
@@ -251,8 +255,12 @@ function move() {
 
             }
             if (data[i].y < 0 || data[i].y > h) {
-                data[i].x = getRandomXPos();
-                data[i].y = getRandomYPos();
+                let x=getRandomXPos();
+                let y=getRandomYPos();
+                data[i].x = x;
+                data[i].y = y;
+                data[i].lastx=x;
+                data[i].lasty=y;
                 data[i].lastax = 0;
                 data[i].lastay = 0;
                 data[i].vx = (randomness * (Math.random() - 0.5)) * initialVelocityFactor;
