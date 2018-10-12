@@ -24,12 +24,13 @@ ctx.fillStyle = '#fff';
 ctx.lineWidth = 2;
 ctxFade.strokeStyle = "#fff";
 ctxFade.fillStyle = "rgba(0,0,0,0.1)";
-ctxFade.lineWidth = 2;
+ctxFade.lineWidth = 4;
 let circleCount = 12;
 let radius = 10;
 let deterministic = false;
 let trail = true;
 let lineTrail = true;
+let fatLineTrail=false;
 
 let data = [
 ]
@@ -82,10 +83,20 @@ function trailMode(id) {
         case 1:
             trail = true;
             lineTrail = true;
+            fatLineTrail=false;
+            ctxFade.lineWidth=2;
             break;
         case 2:
             trail = true;
+            lineTrail = true;
+            fatLineTrail=true;
+            ctxFade.lineWidth=radius*2;
+            break;
+        case 3:
+            trail = true;
+            ctxFade.lineWidth=2;
             lineTrail = false;
+            break;
     }
 }
 
@@ -141,6 +152,7 @@ function loadPreset(id) {
             radius = 2
             break;
     }
+    if(fatLineTrail) ctxFade.lineWidth=radius*2;
     initializeData();
 }
 
@@ -297,8 +309,14 @@ function drawCircles() {
             }
         }
     }
-    ctx.stroke();
+    
     if (trail && (frameCount % fadeInterval == 0)) {
         ctxFade.stroke();
     }
+    ctx.stroke();
+    if(lineTrail && fatLineTrail){
+        ctx.fill();
+    }
+    
+    
 }
