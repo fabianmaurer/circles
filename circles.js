@@ -31,6 +31,7 @@ let deterministic = false;
 let trail = true;
 let lineTrail = true;
 let fatLineTrail=false;
+let trailOnly=false;
 
 let data = [
 ]
@@ -73,6 +74,10 @@ function bindButtons() {
             trailMode(i);
         })
     }
+    $('.buttonbar4').children().first().click(function(){
+        $('.buttonbar4').children().first().toggleClass('active');
+        trailOnly=!trailOnly;
+    })
 }
 
 function trailMode(id) {
@@ -297,8 +302,10 @@ function drawCircles() {
         ctxFade.beginPath();
     }
     for (let i = 0; i < data.length; i++) {
-        ctx.moveTo(data[i].x + radius, data[i].y);
-        ctx.arc(data[i].x, data[i].y, radius, 0, Math.PI * 2);
+        if(!trailOnly){
+            ctx.moveTo(data[i].x + radius, data[i].y);
+            ctx.arc(data[i].x, data[i].y, radius, 0, Math.PI * 2);
+        }
         if (trail && (frameCount % fadeInterval == 0)) {
             if (lineTrail) {
                 ctxFade.moveTo(data[i].lastx, data[i].lasty);
@@ -313,11 +320,11 @@ function drawCircles() {
     if (trail && (frameCount % fadeInterval == 0)) {
         ctxFade.stroke();
     }
-    ctx.stroke();
-    if(trail && lineTrail && fatLineTrail){
-        console.log('hi')
-        ctx.fill();
+    if (!trailOnly){
+        ctx.stroke();
+        if(trail && lineTrail && fatLineTrail){
+            console.log('hi')
+            ctx.fill();
+        }
     }
-    
-    
 }
