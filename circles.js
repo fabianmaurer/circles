@@ -314,7 +314,7 @@ function drawCircles() {
         ctxFade.stroke();
     }
     ctx.stroke();
-    if(lineTrail && fatLineTrail){
+    if(trail && lineTrail && fatLineTrail){
         ctx.fill();
     }
     
