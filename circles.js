@@ -31,7 +31,8 @@ let deterministic = false;
 let trail = true;
 let lineTrail = true;
 let fatLineTrail=false;
-let trailOnly=false;
+let trailOnly=true;
+const colorGradient=[[0.2,0.2,0.8],[1,0,0],[1,0.8,0.8]];
 
 let data = [
 ]
@@ -183,7 +184,6 @@ function multiloop() {
     for (let i = 0; i < mathsPerFrame; i++) {
         calculateMovement();
         move();
-
     }
     drawCircles();
     // ctx.fillText(Math.round(1/((performance.now()-t0)/1000)),10,10);
@@ -208,7 +208,8 @@ function initializeData() {
                 lastax: 0,
                 lastay: 0,
                 vx: (randomness * (Math.random() - 0.5)) * initialVelocityFactor,
-                vy: (randomness * (Math.random() - 0.5)) * initialVelocityFactor
+                vy: (randomness * (Math.random() - 0.5)) * initialVelocityFactor,
+                f:0
             })
         }
     } else {
@@ -219,7 +220,8 @@ function initializeData() {
                 lastax: 0,
                 lastay: 0,
                 vx: (randomness * (Math.random() - 0.5)) * initialVelocityFactor,
-                vy: (randomness * (Math.random() - 0.5)) * initialVelocityFactor
+                vy: (randomness * (Math.random() - 0.5)) * initialVelocityFactor,
+                f:0
             })
         }
     }
@@ -233,12 +235,17 @@ function calculateMovement() {
     let f = 0;
     let ax = 0;
     let ay = 0;
+    for (let i = 0; i < data.length; i++) {
+        data[i].f=0;
+    }
     for (let i = 0; i < data.length - 1; i++) {
         for (let j = i + 1; j < data.length; j++) {
             dx = data[i].x - data[j].x;
             dy = data[i].y - data[j].y;
             dsq = Math.pow(dx, 2) + Math.pow(dy, 2);
             f = 1 / dsq;
+            data[i].f+=f;
+            data[j].f+=f;
             if (f > forceCutoff) f = forceCutoff;
             d = Math.sqrt(dsq);
             ax = speed * f * dx / d;
@@ -298,15 +305,21 @@ function getRandomYPos() {
 
 function drawCircles() {
     ctx.beginPath();
-    if (trail && (frameCount % fadeInterval == 0)) {
-        ctxFade.beginPath();
-    }
+    
     for (let i = 0; i < data.length; i++) {
+        
+        ctx.beginPath();
+        let v=data[i].f*speed*0.5
+        if(v<1) v=1
+        let c=getColorFromGradient(1-1/v);
+        ctx.strokeStyle=c;
         if(!trailOnly){
             ctx.moveTo(data[i].x + radius, data[i].y);
             ctx.arc(data[i].x, data[i].y, radius, 0, Math.PI * 2);
         }
         if (trail && (frameCount % fadeInterval == 0)) {
+            ctxFade.beginPath();
+            ctxFade.strokeStyle=c;
             if (lineTrail) {
                 ctxFade.moveTo(data[i].lastx, data[i].lasty);
                 ctxFade.lineTo(data[i].x, data[i].y);
@@ -314,17 +327,32 @@ function drawCircles() {
                 ctxFade.moveTo(data[i].x + radius, data[i].y);
                 ctxFade.arc(data[i].x, data[i].y, radius, 0, Math.PI * 2);
             }
+            ctxFade.stroke();
+            ctxFade.closePath();
         }
+        if (!trailOnly){
+            ctx.stroke();
+            if(trail && lineTrail && fatLineTrail){
+                ctx.fill();
+            }
+        }
+        ctx.closePath();
     }
     
-    if (trail && (frameCount % fadeInterval == 0)) {
-        ctxFade.stroke();
-    }
-    if (!trailOnly){
-        ctx.stroke();
-        if(trail && lineTrail && fatLineTrail){
-            console.log('hi')
-            ctx.fill();
-        }
-    }
+    
+}
+
+
+
+function getColorFromGradient(v){
+    let l=colorGradient.length;
+    let pos=v*(l-1);
+    let box=Math.min(l-1,Math.floor(pos));
+    let d=pos%1;
+    let from=colorGradient[box]
+    let to=colorGradient[box+1]
+    let r=Math.min(255,Math.floor((from[0]+(to[0]-from[0])*d)*256))
+    let g=Math.min(255,Math.floor((from[1]+(to[1]-from[1])*d)*256))
+    let b=Math.min(255,Math.floor((from[2]+(to[2]-from[2])*d)*256))
+    return 'rgb('+r+','+g+','+b+')'
 }
